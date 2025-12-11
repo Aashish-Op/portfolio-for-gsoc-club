@@ -20,6 +20,7 @@ export function ContactSection() {
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+    const [responseMessage, setResponseMessage] = useState('');
 
     const validate = (): boolean => {
         const newErrors: Record<string, string> = {};
@@ -41,11 +42,28 @@ export function ContactSection() {
         setSubmitStatus('idle');
 
         try {
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            setSubmitStatus('success');
-            setFormData({ sender_name: '', sender_email: '', subject: '', message_body: '', company_name: '' });
+            const apiUrl = import.meta.env.VITE_API_URL || '';
+            const response = await fetch(`${apiUrl}/api/v1/contact/submit`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                setSubmitStatus('success');
+                setResponseMessage(data.message || 'Message sent and saved to database!');
+                setFormData({ sender_name: '', sender_email: '', subject: '', message_body: '', company_name: '' });
+            } else {
+                setSubmitStatus('error');
+                setResponseMessage(data.detail || 'Failed to send message');
+            }
         } catch {
             setSubmitStatus('error');
+            setResponseMessage('Network error. Please try again.');
         } finally {
             setIsSubmitting(false);
         }
@@ -188,7 +206,7 @@ export function ContactSection() {
                                 marginBottom: '1.5rem'
                             }}>
                                 <CheckCircle size={20} />
-                                <span>Message sent successfully! I'll get back to you soon.</span>
+                                <span>{responseMessage || "Message sent and saved to database!"}</span>
                             </div>
                         )}
 
@@ -205,7 +223,7 @@ export function ContactSection() {
                                 marginBottom: '1.5rem'
                             }}>
                                 <AlertCircle size={20} />
-                                <span>Something went wrong. Please try again.</span>
+                                <span>{responseMessage || "Something went wrong. Please try again."}</span>
                             </div>
                         )}
 
