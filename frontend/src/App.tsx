@@ -8,6 +8,7 @@ import {
   ContactSection,
   Footer,
 } from './components/sections';
+import { ApiStatus } from './components/ui';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,6 +32,7 @@ function App() {
             <ContactSection />
           </main>
           <Footer />
+          <ApiStatus />
         </div>
       </ThemeProvider>
     </QueryClientProvider>
