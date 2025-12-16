@@ -2,7 +2,6 @@ import { Github, ExternalLink, Calendar, Code2, Server, Globe, Cpu, Folder, Load
 import { useProjects } from '@/hooks/usePortfolio';
 import type { Project } from '@/types';
 
-// Icon mapping based on category
 const getCategoryIcon = (category: string | null, language: string | null) => {
     if (category === 'ml_ai' || category === 'iot') return <Cpu className="w-8 h-8" />;
     if (category === 'backend') return <Server className="w-8 h-8" />;
@@ -12,7 +11,6 @@ const getCategoryIcon = (category: string | null, language: string | null) => {
     return <Folder className="w-8 h-8" />;
 };
 
-// Color mapping based on language
 const getLanguageColor = (language: string | null): string => {
     const colors: Record<string, string> = {
         'JavaScript': '#f7df1e',
@@ -29,16 +27,196 @@ const getLanguageColor = (language: string | null): string => {
     return colors[language || ''] || '#6366f1';
 };
 
+interface FeaturedProject {
+    id: string;
+    displayName: string;
+    description: string;
+    category: string;
+    imageUrl: string;
+    technologies: string[];
+    githubUrl?: string;
+    liveUrl?: string;
+}
+
+const FEATURED_PROJECTS: FeaturedProject[] = [
+    {
+        id: 'disaster-management',
+        displayName: 'Disaster Management System',
+        description: 'A comprehensive real-time disaster response platform with live alerts, resource coordination, and emergency shelter mapping for communities.',
+        category: 'Full Stack',
+        imageUrl: '/disastermangement.png',
+        technologies: ['React', 'Node.js', 'MongoDB', 'Socket.io'],
+        githubUrl: 'https://github.com/Aashish-Op',
+    },
+    {
+        id: 'dr-glance',
+        displayName: 'Dr. Glance',
+        description: 'AI-powered healthcare companion that provides symptom analysis, personalized health recommendations, and connects patients with specialists.',
+        category: 'Healthcare',
+        imageUrl: '/drglance.png',
+        technologies: ['React', 'Python', 'FastAPI', 'OpenAI'],
+        githubUrl: 'https://github.com/Aashish-Op',
+    },
+    {
+        id: 'haven-realty',
+        displayName: 'Haven Realty Co',
+        description: 'Modern real estate platform featuring property listings, virtual tours, mortgage calculator, and agent booking with seamless user experience.',
+        category: 'Real Estate',
+        imageUrl: '/havenrealtyco.png',
+        technologies: ['Next.js', 'TypeScript', 'PostgreSQL', 'Stripe'],
+        githubUrl: 'https://github.com/Aashish-Op',
+    },
+    {
+        id: 'ecotrack',
+        displayName: 'EcoTrack',
+        description: 'Environmental awareness app that tracks carbon footprint, suggests eco-friendly alternatives, and gamifies sustainable living with community challenges.',
+        category: 'Environment',
+        imageUrl: '/environment awareness.png',
+        technologies: ['React Native', 'Node.js', 'MongoDB', 'Chart.js'],
+        githubUrl: 'https://github.com/Aashish-Op',
+    },
+];
+
+function FeaturedTimelineItem({ project, index }: { project: FeaturedProject; index: number }) {
+    const isLeft = index % 2 === 0;
+
+    return (
+        <div style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr auto 1fr',
+            gap: '2rem',
+            alignItems: 'center',
+            marginBottom: '3rem'
+        }}>
+            {isLeft ? (
+                <>
+                    <div style={{ textAlign: 'right', paddingRight: '1rem' }}>
+                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', color: '#6366f1', marginBottom: '8px' }}>
+                            <Calendar size={14} />
+                            {project.category}
+                        </div>
+                        <h4 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#ffffff', marginBottom: '8px' }}>{project.displayName}</h4>
+                        <p style={{ color: '#94a3b8', fontSize: '0.875rem', marginBottom: '12px', lineHeight: 1.6 }}>{project.description}</p>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', justifyContent: 'flex-end' }}>
+                            {project.technologies.map((tech) => (
+                                <span key={tech} className="tech-tag">{tech}</span>
+                            ))}
+                        </div>
+                    </div>
+                    <div style={{
+                        width: '16px',
+                        height: '16px',
+                        backgroundColor: '#0a0a0f',
+                        border: '3px solid #6366f1',
+                        borderRadius: '50%',
+                        position: 'relative',
+                        zIndex: 10
+                    }} />
+                    <div style={{ paddingLeft: '1rem' }}>
+                        <div className="project-card" style={{ maxWidth: '300px', overflow: 'hidden' }}>
+                            <img
+                                src={project.imageUrl}
+                                alt={project.displayName}
+                                className="timeline-project-image"
+                                style={{ width: '100%', height: '160px', objectFit: 'cover' }}
+                            />
+                        </div>
+                    </div>
+                </>
+            ) : (
+                <>
+                    <div style={{ paddingRight: '1rem', display: 'flex', justifyContent: 'flex-end' }}>
+                        <div className="project-card" style={{ maxWidth: '300px', overflow: 'hidden' }}>
+                            <img
+                                src={project.imageUrl}
+                                alt={project.displayName}
+                                className="timeline-project-image"
+                                style={{ width: '100%', height: '160px', objectFit: 'cover' }}
+                            />
+                        </div>
+                    </div>
+                    <div style={{
+                        width: '16px',
+                        height: '16px',
+                        backgroundColor: '#0a0a0f',
+                        border: '3px solid #6366f1',
+                        borderRadius: '50%',
+                        position: 'relative',
+                        zIndex: 10
+                    }} />
+                    <div style={{ paddingLeft: '1rem' }}>
+                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', color: '#6366f1', marginBottom: '8px' }}>
+                            <Calendar size={14} />
+                            {project.category}
+                        </div>
+                        <h4 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#ffffff', marginBottom: '8px' }}>{project.displayName}</h4>
+                        <p style={{ color: '#94a3b8', fontSize: '0.875rem', marginBottom: '12px', lineHeight: 1.6 }}>{project.description}</p>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                            {project.technologies.map((tech) => (
+                                <span key={tech} className="tech-tag">{tech}</span>
+                            ))}
+                        </div>
+                    </div>
+                </>
+            )}
+        </div>
+    );
+}
+
+const PROJECT_IMAGES: Record<string, string> = {
+    'drglance': '/drglance.png',
+    'disaster-relief-coordinationplatform': '/disastermangement.png',
+    'disaster': '/disastermangement.png',
+    'haven-realty': '/havenrealtyco.png',
+    'haven realty': '/havenrealtyco.png',
+    'ecotrack': '/environment awareness.png',
+    'environment': '/environment awareness.png',
+    'che110': '/environment awareness.png',
+    'portfolio-for-gsoc': '/image.png',
+    'portfolio for gsoc': '/image.png',
+    'gsoc': '/image.png',
+};
+
+function getProjectImage(projectName: string): string | null {
+    const nameLower = projectName.toLowerCase().replace(/[\s_]/g, '-');
+    for (const [key, url] of Object.entries(PROJECT_IMAGES)) {
+        if (nameLower.includes(key)) {
+            return url;
+        }
+    }
+    return null;
+}
+
 function ProjectCard({ project }: { project: Project }) {
     const icon = getCategoryIcon(project.category, project.primary_language);
     const color = getLanguageColor(project.primary_language);
+    const projectImage = getProjectImage(project.name);
 
     return (
         <div className="project-card">
-            <div className="project-image" style={{ background: `linear-gradient(135deg, ${color}20 0%, #16161d 100%)` }}>
-                <div style={{ color: color, opacity: 0.6 }}>
-                    {icon}
-                </div>
+            <div className="project-image" style={{
+                background: projectImage ? 'transparent' : `linear-gradient(135deg, ${color}20 0%, #16161d 100%)`,
+                overflow: 'hidden'
+            }}>
+                {projectImage ? (
+                    <img
+                        src={projectImage}
+                        alt={project.display_name}
+                        style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            transition: 'transform 0.3s ease'
+                        }}
+                        onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                        }}
+                    />
+                ) : (
+                    <div style={{ color: color, opacity: 0.6 }}>
+                        {icon}
+                    </div>
+                )}
             </div>
 
             <div style={{ padding: '20px' }}>
@@ -99,7 +277,6 @@ function ProjectCard({ project }: { project: Project }) {
                     {project.description || 'No description available'}
                 </p>
 
-                {/* GitHub Stats */}
                 <div style={{ display: 'flex', gap: '16px', marginBottom: '12px', fontSize: '0.8rem', color: '#64748b' }}>
                     {project.stars_count > 0 && (
                         <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -128,93 +305,17 @@ function ProjectCard({ project }: { project: Project }) {
     );
 }
 
-function TimelineItem({ project, index }: { project: Project; index: number }) {
-    const isLeft = index % 2 === 0;
-    const icon = getCategoryIcon(project.category, project.primary_language);
-    const color = getLanguageColor(project.primary_language);
-
-    return (
-        <div style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr auto 1fr',
-            gap: '2rem',
-            alignItems: 'center',
-            marginBottom: '3rem'
-        }}>
-            {isLeft ? (
-                <>
-                    <div style={{ textAlign: 'right', paddingRight: '1rem' }}>
-                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', color: '#6366f1', marginBottom: '8px' }}>
-                            <Calendar size={14} />
-                            {project.category || 'Project'}
-                        </div>
-                        <h4 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#ffffff', marginBottom: '8px' }}>{project.display_name}</h4>
-                        <p style={{ color: '#94a3b8', fontSize: '0.875rem', marginBottom: '12px' }}>{project.description || 'No description'}</p>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', justifyContent: 'flex-end' }}>
-                            {project.topics.slice(0, 3).map((tech) => (
-                                <span key={tech} className="tech-tag">{tech}</span>
-                            ))}
-                        </div>
-                    </div>
-                    <div style={{
-                        width: '16px',
-                        height: '16px',
-                        backgroundColor: '#0a0a0f',
-                        border: '3px solid #6366f1',
-                        borderRadius: '50%',
-                        position: 'relative',
-                        zIndex: 10
-                    }} />
-                    <div style={{ paddingLeft: '1rem' }}>
-                        <div className="project-card" style={{ maxWidth: '300px' }}>
-                            <div className="project-image" style={{ height: '120px', background: `linear-gradient(135deg, ${color}20 0%, #16161d 100%)` }}>
-                                <div style={{ color: color, opacity: 0.6 }}>{icon}</div>
-                            </div>
-                        </div>
-                    </div>
-                </>
-            ) : (
-                <>
-                    <div style={{ paddingRight: '1rem', display: 'flex', justifyContent: 'flex-end' }}>
-                        <div className="project-card" style={{ maxWidth: '300px' }}>
-                            <div className="project-image" style={{ height: '120px', background: `linear-gradient(135deg, ${color}20 0%, #16161d 100%)` }}>
-                                <div style={{ color: color, opacity: 0.6 }}>{icon}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div style={{
-                        width: '16px',
-                        height: '16px',
-                        backgroundColor: '#0a0a0f',
-                        border: '3px solid #6366f1',
-                        borderRadius: '50%',
-                        position: 'relative',
-                        zIndex: 10
-                    }} />
-                    <div style={{ paddingLeft: '1rem' }}>
-                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', color: '#6366f1', marginBottom: '8px' }}>
-                            <Calendar size={14} />
-                            {project.category || 'Project'}
-                        </div>
-                        <h4 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#ffffff', marginBottom: '8px' }}>{project.display_name}</h4>
-                        <p style={{ color: '#94a3b8', fontSize: '0.875rem', marginBottom: '12px' }}>{project.description || 'No description'}</p>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                            {project.topics.slice(0, 3).map((tech) => (
-                                <span key={tech} className="tech-tag">{tech}</span>
-                            ))}
-                        </div>
-                    </div>
-                </>
-            )}
-        </div>
-    );
-}
-
 export function ProjectsSection() {
     const { data, isLoading, error } = useProjects();
-
     const projects = data?.projects || [];
-    const featuredProjects = projects.filter(p => p.is_featured);
+
+    const sortedProjects = [...projects].sort((a, b) => {
+        const aHasImage = getProjectImage(a.name) !== null;
+        const bHasImage = getProjectImage(b.name) !== null;
+        if (aHasImage && !bHasImage) return -1;
+        if (!aHasImage && bHasImage) return 1;
+        return 0;
+    });
 
     return (
         <section id="projects" style={{ padding: '6rem 1.5rem', backgroundColor: '#0d0d14' }}>
@@ -224,7 +325,6 @@ export function ProjectsSection() {
                     <p className="section-subtitle">
                         A showcase of my work across full-stack development, IoT, and more
                     </p>
-                    {/* API Data Indicator */}
                     <div style={{
                         display: 'inline-flex',
                         alignItems: 'center',
@@ -242,6 +342,30 @@ export function ProjectsSection() {
                     </div>
                 </div>
 
+                {/* Featured Projects Timeline */}
+                <div style={{ marginBottom: '5rem' }}>
+                    <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                        <h3 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#ffffff', marginBottom: '8px' }}>Featured Projects</h3>
+                        <p style={{ color: '#64748b' }}>My highlighted work</p>
+                    </div>
+
+                    <div style={{ position: 'relative' }}>
+                        <div style={{
+                            position: 'absolute',
+                            left: '50%',
+                            transform: 'translateX(-50%)',
+                            width: '2px',
+                            height: '100%',
+                            background: 'linear-gradient(180deg, #6366f1 0%, #8b5cf6 50%, #1e1e2a 100%)'
+                        }} />
+
+                        {FEATURED_PROJECTS.map((project, index) => (
+                            <FeaturedTimelineItem key={project.id} project={project} index={index} />
+                        ))}
+                    </div>
+                </div>
+
+                {/* All Projects Grid */}
                 {isLoading ? (
                     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '4rem' }}>
                         <Loader size={40} style={{ color: '#6366f1', animation: 'spin 1s linear infinite' }} />
@@ -250,35 +374,8 @@ export function ProjectsSection() {
                     <div style={{ textAlign: 'center', padding: '4rem', color: '#ef4444' }}>
                         Failed to load projects. Please try again later.
                     </div>
-                ) : (
+                ) : projects.length > 0 && (
                     <>
-                        {/* Timeline - Featured Projects */}
-                        {featuredProjects.length > 0 && (
-                            <div style={{ marginBottom: '5rem' }}>
-                                <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-                                    <h3 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#ffffff', marginBottom: '8px' }}>Featured Projects</h3>
-                                    <p style={{ color: '#64748b' }}>My highlighted work</p>
-                                </div>
-
-                                <div style={{ position: 'relative' }}>
-                                    {/* Timeline line */}
-                                    <div style={{
-                                        position: 'absolute',
-                                        left: '50%',
-                                        transform: 'translateX(-50%)',
-                                        width: '2px',
-                                        height: '100%',
-                                        background: 'linear-gradient(180deg, #6366f1 0%, #8b5cf6 50%, #1e1e2a 100%)'
-                                    }} />
-
-                                    {featuredProjects.slice(0, 4).map((project, index) => (
-                                        <TimelineItem key={project.github_id} project={project} index={index} />
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* All Projects Grid */}
                         <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
                             <h3 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#ffffff', marginBottom: '8px' }}>All Projects</h3>
                             <p style={{ color: '#64748b' }}>Complete collection from GitHub ({projects.length} repositories)</p>
@@ -289,7 +386,7 @@ export function ProjectsSection() {
                             gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
                             gap: '1.5rem'
                         }}>
-                            {projects.map((project) => (
+                            {sortedProjects.map((project) => (
                                 <ProjectCard key={project.github_id} project={project} />
                             ))}
                         </div>

@@ -18,13 +18,10 @@ async def submit_contact_message(
     db_session: AsyncSession = Depends(get_db_session),
     current_user: Optional[User] = Depends(get_current_user_optional)
 ):
-    """
-    Submit a contact message. Works for both authenticated and anonymous users.
-    Messages are stored in the database for demonstration purposes.
-    """
+    
     ip_address = request.client.host if request.client else None
     
-    # Create message - user_id is optional for anonymous submissions
+
     message = ContactMessage(
         user_id=current_user.id if current_user else None,
         sender_name=payload.sender_name,
@@ -49,10 +46,7 @@ async def submit_contact_message(
 async def get_all_messages(
     db_session: AsyncSession = Depends(get_db_session)
 ):
-    """
-    Get all contact messages stored in the database.
-    This endpoint is for demonstration/jury purposes.
-    """
+    
     query = select(ContactMessage).order_by(ContactMessage.created_at.desc())
     result = await db_session.execute(query)
     messages = list(result.scalars().all())
@@ -79,7 +73,7 @@ async def get_all_messages(
 async def get_messages_count(
     db_session: AsyncSession = Depends(get_db_session)
 ):
-    """Get total count of contact messages"""
+    
     from sqlalchemy import func
     count = await db_session.scalar(select(func.count(ContactMessage.id))) or 0
     return {"count": count}

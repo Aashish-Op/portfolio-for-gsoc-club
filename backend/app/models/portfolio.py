@@ -1,8 +1,7 @@
 from datetime import datetime
 from typing import Optional
-from sqlalchemy import String, Text, DateTime, Integer, Boolean, JSON, func
+from sqlalchemy import String, Text, DateTime, Integer, Boolean, JSON, func, Date
 from sqlalchemy.orm import Mapped, mapped_column
-
 from app.core.database import Base
 
 
@@ -36,7 +35,7 @@ class ContactMessage(Base):
     __tablename__ = "contact_messages"
     
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    user_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    user_id: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     
     sender_name: Mapped[str] = mapped_column(String(255), nullable=False)
     sender_email: Mapped[str] = mapped_column(String(255), nullable=False)
@@ -49,3 +48,25 @@ class ContactMessage(Base):
     
     ip_address: Mapped[Optional[str]] = mapped_column(String(45))
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+
+class VisitorStats(Base):
+    __tablename__ = "visitor_stats"
+    
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    visit_date: Mapped[datetime] = mapped_column(Date, unique=True, index=True)
+    visit_count: Mapped[int] = mapped_column(Integer, default=0)
+    unique_visitors: Mapped[int] = mapped_column(Integer, default=0)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
+
+
+class VisitorLog(Base):
+    __tablename__ = "visitor_logs"
+    
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    ip_address: Mapped[Optional[str]] = mapped_column(String(45))
+    user_agent: Mapped[Optional[str]] = mapped_column(String(500))
+    referrer: Mapped[Optional[str]] = mapped_column(String(500))
+    page_visited: Mapped[Optional[str]] = mapped_column(String(255))
+    visited_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())

@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import logging
 
 from app.core import get_settings, init_database
-from app.routers import portfolio_router, contact_router, health_router
+from app.routers import portfolio_router, contact_router, health_router, visitors_router
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -47,3 +47,5 @@ app.add_middleware(
 app.include_router(health_router)
 app.include_router(portfolio_router, prefix="/api/v1")
 app.include_router(contact_router, prefix="/api/v1")
+app.include_router(visitors_router, prefix="/api/v1")
+

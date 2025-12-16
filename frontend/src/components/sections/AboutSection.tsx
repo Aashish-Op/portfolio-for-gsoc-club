@@ -27,12 +27,6 @@ const ABOUT_CARDS = [
     },
 ];
 
-const SKILLS = [
-    'JavaScript', 'TypeScript', 'Python', 'C++',
-    'React', 'Node.js', 'Express', 'FastAPI',
-    'MongoDB', 'PostgreSQL', 'Tailwind', 'Git'
-];
-
 export function AboutSection() {
     return (
         <section id="about" style={{ padding: '6rem 1.5rem', position: 'relative' }}>
@@ -81,19 +75,6 @@ export function AboutSection() {
                             </div>
                         </div>
                     ))}
-                </div>
-
-                <div className="card" style={{ padding: '2rem' }}>
-                    <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#ffffff', marginBottom: '1.5rem', textAlign: 'center' }}>
-                        Tech Stack
-                    </h3>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '12px' }}>
-                        {SKILLS.map((skill) => (
-                            <span key={skill} className="tech-tag" style={{ padding: '8px 16px', fontSize: '0.875rem' }}>
-                                {skill}
-                            </span>
-                        ))}
-                    </div>
                 </div>
             </div>
         </section>

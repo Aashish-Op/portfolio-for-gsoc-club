@@ -9,7 +9,6 @@ settings = get_settings()
 async def fetch_github_repos() -> list[dict]:
     headers = {"Accept": "application/vnd.github.v3+json"}
     
-    # Add auth token if available for higher rate limits
     if settings.github_token:
         headers["Authorization"] = f"Bearer {settings.github_token}"
     
@@ -24,7 +23,8 @@ async def fetch_github_repos() -> list[dict]:
             return get_fallback_repos()
         
         repos = response.json()
-        return [enrich_repo(repo) for repo in repos]
+        important_repos = [repo for repo in repos if is_important_repo(repo)]
+        return [enrich_repo(repo) for repo in important_repos]
 
 
 def enrich_repo(repo: dict) -> dict:
@@ -69,8 +69,24 @@ def infer_category(repo: dict) -> str:
 
 
 def is_featured_project(name: str) -> bool:
-    featured = ["drglance", "backendvidtube", "haven-realty", "disaster-relief", "sih"]
-    return any(fn in name.lower() for fn in featured)
+    featured_keywords = [
+        "drglance", "backendvidtube", "haven-realty", "disaster-relief", 
+        "sih", "disaster", "ecotrack", "environment", "portfolio"
+    ]
+    return any(fn in name.lower() for fn in featured_keywords)
+
+
+def is_important_repo(repo: dict) -> bool:
+    if repo.get("fork", False):
+        return False
+    
+    has_description = bool(repo.get("description"))
+    has_topics = bool(repo.get("topics"))
+    has_stars = repo.get("stargazers_count", 0) > 0
+    has_homepage = bool(repo.get("homepage"))
+    is_featured = is_featured_project(repo["name"])
+    
+    return is_featured or has_description or has_topics or has_stars or has_homepage
 
 
 def get_fallback_repos() -> list[dict]:

@@ -1,13 +1,20 @@
 import { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Github, Linkedin, Menu, X, Sun, Moon } from 'lucide-react';
 import { useTheme } from '../../context';
 
-const NAV_ITEMS = ['Home', 'About', 'Projects', 'Contact'];
+const NAV_ITEMS = [
+    { name: 'Home', path: '/' },
+    { name: 'About', path: '/about' },
+    { name: 'Projects', path: '/projects' },
+    { name: 'Contact', path: '/contact' },
+];
 
 export function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
     const { theme, toggleTheme } = useTheme();
+    const location = useLocation();
 
     useEffect(() => {
         const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -15,11 +22,7 @@ export function Navbar() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const scrollTo = (id: string) => {
-        setMobileOpen(false);
-        const el = document.getElementById(id.toLowerCase());
-        el?.scrollIntoView({ behavior: 'smooth' });
-    };
+    const isActive = (path: string) => location.pathname === path;
 
     return (
         <>
@@ -36,16 +39,25 @@ export function Navbar() {
             }}>
                 <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1.5rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '64px' }}>
-                        <a href="#" className="gradient-text" style={{ fontSize: '1.25rem', fontWeight: 700, textDecoration: 'none' }}>
+                        <Link to="/" className="gradient-text" style={{ fontSize: '1.25rem', fontWeight: 700, textDecoration: 'none' }}>
                             Ashish Gupta
-                        </a>
+                        </Link>
 
                         {/* Desktop nav */}
                         <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }} className="desktop-nav">
                             {NAV_ITEMS.map((item) => (
-                                <button key={item} onClick={() => scrollTo(item)} className="nav-link">
-                                    {item}
-                                </button>
+                                <Link
+                                    key={item.name}
+                                    to={item.path}
+                                    className="nav-link"
+                                    style={{
+                                        textDecoration: 'none',
+                                        color: isActive(item.path) ? 'var(--accent-primary)' : 'var(--text-secondary)',
+                                        borderBottom: isActive(item.path) ? '2px solid var(--accent-primary)' : 'none',
+                                    }}
+                                >
+                                    {item.name}
+                                </Link>
                             ))}
                         </div>
 
@@ -57,15 +69,13 @@ export function Navbar() {
                             <a href="https://linkedin.com/in/ashish-gupta" target="_blank" rel="noopener noreferrer" className="icon-button">
                                 <Linkedin size={18} />
                             </a>
-                            <a
-                                href="#contact"
-                                onClick={(e) => { e.preventDefault(); scrollTo('contact'); }}
+                            <Link
+                                to="/contact"
                                 className="glow-button"
-                                style={{ padding: '10px 20px', fontSize: '0.875rem' }}
+                                style={{ padding: '10px 20px', fontSize: '0.875rem', textDecoration: 'none' }}
                             >
                                 <span>Hire Me</span>
-                            </a>
-                            {/* Theme toggle button */}
+                            </Link>
                             <button
                                 onClick={toggleTheme}
                                 className="icon-button"
@@ -120,23 +130,25 @@ export function Navbar() {
                     padding: '1rem 1.5rem',
                 }}>
                     {NAV_ITEMS.map((item) => (
-                        <button
-                            key={item}
-                            onClick={() => scrollTo(item)}
+                        <Link
+                            key={item.name}
+                            to={item.path}
+                            onClick={() => setMobileOpen(false)}
                             style={{
                                 display: 'block',
                                 width: '100%',
                                 textAlign: 'left',
                                 padding: '12px 0',
-                                color: 'var(--text-secondary)',
+                                color: isActive(item.path) ? 'var(--accent-primary)' : 'var(--text-secondary)',
                                 background: 'none',
                                 border: 'none',
                                 fontSize: '1rem',
                                 cursor: 'pointer',
+                                textDecoration: 'none',
                             }}
                         >
-                            {item}
-                        </button>
+                            {item.name}
+                        </Link>
                     ))}
                 </div>
             )}
